@@ -1,7 +1,5 @@
 mod snake;
 mod direction;
-
-mod food_spawner;
 mod food;
 
 use std::{collections::LinkedList, iter::FromIterator};
@@ -11,7 +9,7 @@ use opengl_graphics::{GlGraphics, OpenGL};
 use piston::{Button, ButtonEvent, ButtonState, EventLoop, EventSettings, Events, Key, RenderArgs, RenderEvent, UpdateArgs, UpdateEvent, Window, WindowSettings};
 
 use direction::Direction;
-use food_spawner::FoodSpawner;
+use food::food_spawner::FoodSpawner;
 use snake::Snake;
 
 pub struct App {

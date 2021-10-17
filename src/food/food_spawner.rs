@@ -32,9 +32,6 @@ impl FoodSpawner {
                 end: (window_size.height / 20.) as i32,
             });
 
-            println!("Max x: {}", (window_size.width / 20.) as i32);
-            println!("Max y: {}", (window_size.height / 20.) as i32);
-
             foods.push(Food { x, y });
         }
 
