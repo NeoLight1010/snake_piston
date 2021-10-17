@@ -1,3 +1,4 @@
+mod constants;
 mod snake;
 mod direction;
 mod food;

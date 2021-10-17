@@ -4,6 +4,7 @@ use opengl_graphics::GlGraphics;
 use piston::{RenderArgs, Size};
 use rand::Rng;
 
+use crate::constants::SQUARE_SIZE;
 use crate::food::Food;
 
 pub struct FoodSpawner {
@@ -24,12 +25,12 @@ impl FoodSpawner {
         for _ in 0..n {
             let x = rng.gen_range(Range {
                 start: 0,
-                end: (window_size.width / 20.) as i32,
+                end: (window_size.width / SQUARE_SIZE) as i32,
             });
 
             let y = rng.gen_range(Range {
                 start: 0,
-                end: (window_size.height / 20.) as i32,
+                end: (window_size.height / SQUARE_SIZE) as i32,
             });
 
             foods.push(Food { x, y });
@@ -45,7 +46,11 @@ impl FoodSpawner {
             .foods
             .iter()
             .map(|food| {
-                graphics::rectangle::square((food.x * 20) as f64, (food.y * 20) as f64, 20.)
+                graphics::rectangle::square(
+                    food.x as f64 * SQUARE_SIZE,
+                    food.y as f64 * SQUARE_SIZE,
+                    SQUARE_SIZE,
+                )
             })
             .collect();
 
