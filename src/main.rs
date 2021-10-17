@@ -1,18 +1,23 @@
+mod snake;
+mod direction;
+
+mod food_spawner;
+mod food;
+
 use std::{collections::LinkedList, iter::FromIterator};
 
 use glutin_window::GlutinWindow;
 use opengl_graphics::{GlGraphics, OpenGL};
-use piston::{Button, ButtonEvent, ButtonState, EventLoop, EventSettings, Events, Key, RenderArgs, RenderEvent, UpdateArgs, UpdateEvent, WindowSettings};
+use piston::{Button, ButtonEvent, ButtonState, EventLoop, EventSettings, Events, Key, RenderArgs, RenderEvent, UpdateArgs, UpdateEvent, Window, WindowSettings};
 
-mod snake;
-mod direction;
-
-use snake::Snake;
 use direction::Direction;
+use food_spawner::FoodSpawner;
+use snake::Snake;
 
 pub struct App {
     gl: GlGraphics,
-    snake: snake::Snake,
+    snake: Snake,
+    food_spawner: FoodSpawner,
 }
 
 impl App {
@@ -24,6 +29,7 @@ impl App {
         });
 
         self.snake.render(&mut self.gl, args);
+        self.food_spawner.render(&mut self.gl, args);
     }
 
     fn update(&mut self, _args: &UpdateArgs) {
@@ -34,15 +40,11 @@ impl App {
         let last_direction = self.snake.direction.clone();
 
         self.snake.direction = match button {
-            &Button::Keyboard(Key::Up)
-                if last_direction != Direction::Down => Direction::Up,
-            &Button::Keyboard(Key::Left)
-                if last_direction != Direction::Right => Direction::Left,
-            &Button::Keyboard(Key::Right)
-                if last_direction != Direction::Left => Direction::Right,
-            &Button::Keyboard(Key::Down)
-                if last_direction != Direction::Up => Direction::Down,
-            &_ => last_direction
+            &Button::Keyboard(Key::Up) if last_direction != Direction::Down => Direction::Up,
+            &Button::Keyboard(Key::Left) if last_direction != Direction::Right => Direction::Left,
+            &Button::Keyboard(Key::Right) if last_direction != Direction::Left => Direction::Right,
+            &Button::Keyboard(Key::Down) if last_direction != Direction::Up => Direction::Down,
+            &_ => last_direction,
         }
     }
 }
@@ -51,6 +53,7 @@ fn main() {
     let opengl = OpenGL::V3_2;
 
     let mut window: GlutinWindow = WindowSettings::new("spinning-square", [200, 200])
+        .resizable(false)
         .graphics_api(opengl)
         .exit_on_esc(true)
         .build()
@@ -58,7 +61,11 @@ fn main() {
 
     let mut app = App {
         gl: GlGraphics::new(opengl),
-        snake: Snake { body: LinkedList::from_iter([(0, 0), (0, 1)]) ,direction: Direction::Right},
+        snake: Snake {
+            body: LinkedList::from_iter([(0, 0), (0, 1)]),
+            direction: Direction::Right,
+        },
+        food_spawner: FoodSpawner::new(2, window.size())
     };
 
     let mut events = Events::new(EventSettings::new()).ups(8);

@@ -14,8 +14,6 @@ impl Snake {
     pub fn render(&self, gl: &mut GlGraphics, args: &RenderArgs) {
         const RED: [f32; 4] = [1., 0., 0., 1.];
 
-        // let square = graphics::rectangle::square((self.x * 20) as f64, (self.y * 20) as f64, 20.);
-
         let squares: Vec<graphics::types::Rectangle> = self.body.iter()
             .map(|&(x, y)| {
                 graphics::rectangle::square((x * 20) as f64, (y * 20) as f64, 20.)
