@@ -1,13 +1,14 @@
 mod constants;
-mod snake;
 mod direction;
 mod food;
-
-use std::{collections::LinkedList, iter::FromIterator};
+mod snake;
 
 use glutin_window::GlutinWindow;
 use opengl_graphics::{GlGraphics, OpenGL};
-use piston::{Button, ButtonEvent, ButtonState, EventLoop, EventSettings, Events, Key, RenderArgs, RenderEvent, UpdateArgs, UpdateEvent, Window, WindowSettings};
+use piston::{
+    Button, ButtonEvent, ButtonState, EventLoop, EventSettings, Events, Key, RenderArgs,
+    RenderEvent, UpdateArgs, UpdateEvent, Window, WindowSettings,
+};
 
 use direction::Direction;
 use food::food_spawner::FoodSpawner;
@@ -33,6 +34,23 @@ impl App {
 
     fn update(&mut self, _args: &UpdateArgs) {
         self.snake.update();
+
+        let snake_head = self.snake.get_head().unwrap();
+
+        // Detect eaten foods.
+        let eaten_food_i = self
+            .food_spawner
+            .foods
+            .iter()
+            .position(|food| food.x == snake_head.0 && food.y == snake_head.1);
+
+        match eaten_food_i {
+            Some(i) => {
+                self.food_spawner.foods.remove(i);
+                self.snake.grow();
+            }
+            None => (),
+        }
     }
 
     fn key_pressed(&mut self, button: &Button) {
@@ -60,11 +78,8 @@ fn main() {
 
     let mut app = App {
         gl: GlGraphics::new(opengl),
-        snake: Snake {
-            body: LinkedList::from_iter([(0, 0), (0, 1)]),
-            direction: Direction::Right,
-        },
-        food_spawner: FoodSpawner::new(2, window.size())
+        snake: Snake::default(),
+        food_spawner: FoodSpawner::new(2, window.size()),
     };
 
     let mut events = Events::new(EventSettings::new()).ups(8);

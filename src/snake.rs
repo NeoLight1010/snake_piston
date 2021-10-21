@@ -1,4 +1,5 @@
 use std::collections::LinkedList;
+use std::iter::FromIterator;
 
 use opengl_graphics::GlGraphics;
 use piston::RenderArgs;
@@ -8,7 +9,18 @@ use crate::direction::Direction;
 
 pub struct Snake {
     pub body: LinkedList<(i32, i32)>,
+    pub previous_segment: Option<(i32, i32)>,
     pub direction: Direction,
+}
+
+impl Default for Snake {
+    fn default() -> Snake {
+        Snake {
+            body: LinkedList::from_iter([(0, 0), (0, 1)]),
+            previous_segment: None,
+            direction: Direction::Right,
+        }
+    }
 }
 
 impl Snake {
@@ -47,6 +59,18 @@ impl Snake {
         }
 
         self.body.push_front(new_head);
-        self.body.pop_back();
+        self.previous_segment = self.body.pop_back();
+    }
+
+    /// Returns a reference to the head of the snake.
+    pub fn get_head(&mut self) -> Option<&(i32, i32)> {
+        self.body.front()
+    }
+
+    pub fn grow(&mut self) {
+        if self.previous_segment.is_some() {
+            self.body.push_back(self.previous_segment.unwrap());
+        }
+
     }
 }
