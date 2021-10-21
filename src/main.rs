@@ -37,7 +37,7 @@ impl App {
 
         let snake_head = self.snake.get_head().unwrap();
 
-        // Detect eaten foods.
+        // Detect eaten foods
         let eaten_food_i = self
             .food_spawner
             .foods
@@ -50,6 +50,11 @@ impl App {
                 self.snake.grow();
             }
             None => (),
+        }
+
+        // Respawn foods
+        if self.food_spawner.foods.len() == 0 {
+            self.food_spawner.spawn_to_regular();
         }
     }
 
